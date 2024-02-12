@@ -2,6 +2,7 @@ ctransformers
 sentence-transformers
 pinecone-client==2.2.4
 langchain
+langchain-community`
 streamlit
 streamlit-chat
 flask
