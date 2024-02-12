@@ -37,11 +37,11 @@ PINECONE_API_ENV = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```ini
 ## Download the Llama 2 Model:
 
-llama-2-7b-chat.ggmlv3.q4_0.bin
+llama-2-13b-chat.ggmlv3.q4_0.bin
 
 
 ## From the following link:
-https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/tree/main
+https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML
 ```
 
 ```bash
