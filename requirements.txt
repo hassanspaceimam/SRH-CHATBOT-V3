@@ -1,0 +1,10 @@
+ctransformers
+sentence-transformers
+pinecone-client==2.2.4
+langchain
+streamlit
+streamlit-chat
+flask
+pypdf
+python-dotenv
+-e .
