@@ -27,6 +27,18 @@ def text_split(extracted_data):
 
 
 #download embedding model
+#def download_hugging_face_embeddings():
+#    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+#    return embeddings
+
+
+from langchain_community.embeddings import HuggingFaceBgeEmbeddings
+
 def download_hugging_face_embeddings():
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    model_name = "BAAI/bge-base-en-v1.5"
+    model_kwargs = {"device": "cpu"}
+    encode_kwargs = {"normalize_embeddings": True}
+    embeddings = HuggingFaceBgeEmbeddings(
+    model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs)
     return embeddings
+
