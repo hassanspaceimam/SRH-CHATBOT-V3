@@ -45,21 +45,15 @@ https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML
 ```
 
 ```bash
-# run the following command
+# Make sure Pincecone index called 'srh-heidelberg-docs' with METRIC = cosine and DIMENSIONS = 768 is created beforehand 
+# run the following command to convert pdf files in data folder into vectors and upload them to Pincecone
 python store_index.py
 ```
 
 ```bash
-# Finally run the following command
+# Finally run the following command to launch app and go to http://localhost:8080/ 
 python app.py
 ```
-
-Now,
-```bash
-open up localhost:
-```
-
-
 ### Techstack Used:
 
 - Python
@@ -67,3 +61,4 @@ open up localhost:
 - Flask
 - Meta Llama2
 - Pinecone
+- Streamlit
