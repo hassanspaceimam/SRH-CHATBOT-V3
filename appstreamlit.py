@@ -10,6 +10,27 @@ from langchain.chains import RetrievalQA
 from src.helper import download_hugging_face_embeddings
 from src.prompt import prompt_template
 
+st.set_page_config(page_icon='SRH.png',page_title="SrhGPT")
+
+def inject_custom_css():
+    st.markdown("""
+        <style>
+        .msg {
+            background-color: #FFFFFF;
+        }
+        .chat{
+                background:#FFFF;
+        }
+        h1 {
+            color: #DF4807; 
+        }
+        .message {
+            background-color: none !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+
 # Bing Search Function with Caching and Limited Results
 @lru_cache(maxsize=100)
 def bing_search(query, bing_api_key):
@@ -56,7 +77,8 @@ qa = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": PROMPT}
 )
 
-st.title("Question Answering System")
+st.title("SRH Chat Bot")
+
 
 def initialize_session_state():
     if 'history' not in st.session_state:
@@ -117,5 +139,7 @@ def process_query(user_input, search_type):
     st.session_state['generated'].append(answer_message)
     st.session_state['source'].append(search_type)
 
+
+inject_custom_css()
 initialize_session_state()
 display_chat_history()
