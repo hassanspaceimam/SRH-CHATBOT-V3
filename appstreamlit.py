@@ -19,7 +19,7 @@ def inject_custom_css():
             background-color: #FFFFFF;
         }
         .chat{
-                background:#FFFF;
+            background:#FFFF;
         }
         h1 {
             color: #DF4807; 
@@ -27,11 +27,22 @@ def inject_custom_css():
         .message {
             background-color: none !important;
         }
+        .overlay {
+            position: fixed;
+            display: block;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            cursor: pointer;
+        }
         </style>
         """, unsafe_allow_html=True)
 
-
-# Bing Search Function with Caching and Limited Results
 @lru_cache(maxsize=100)
 def bing_search(query, bing_api_key):
     url = "https://api.bing.microsoft.com/v7.0/search"
@@ -50,10 +61,10 @@ def bing_search(query, bing_api_key):
     else:
         return "Error performing Bing search."
 
-# Replace with your actual Bing API key
+
 bing_api_key = '672569df979442e8abcf74be937a27d5'
 
-# Pinecone API configurations
+
 PINECONE_API_KEY = "6ca2ecba-e336-4f09-9a39-e1e3b67d5f9d"
 PINECONE_API_ENV = "gcp-starter"
 pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_API_ENV)
@@ -116,28 +127,59 @@ def display_chat_history():
             message(st.session_state["past"][i], is_user=True, key=str(i) + '_user', avatar_style="thumbs")
             message(st.session_state["generated"][i], key=str(i), avatar_style="fun-emoji")
 
+import re
+
+def remove_repeated_sentences(text):
+    sentences = re.split(r'(?<=[.!?]) +', text)
+    unique_sentences = []
+    for sentence in sentences:
+        if sentence not in unique_sentences:
+            unique_sentences.append(sentence)
+    return ' '.join(unique_sentences)
+
 def process_query(user_input, search_type):
-    if search_type == "Internal":
-        # Internal search with RetrievalQA
-        result = qa.invoke({"query": user_input})
-        if 'result' in result and 'source_documents' in result:
-            answer = result["result"]
-            sources = result["source_documents"]
-            answer_message = f"Answer: {answer}\n\nSource Documents:\n" + \
-                             "\n".join([f"Source {i+1}: {source}" for i, source in enumerate(sources)])
+    with st.spinner('Fetching the answer...'):  # Start of spinner logic
+        if search_type == "Internal":
+            # Internal search with RetrievalQA
+            result = qa.invoke({"query": user_input})
+            if 'result' in result and 'source_documents' in result:
+                # Remove newline characters and extra slashes from the answer
+                answer = result["result"].replace('\\n', ' ').replace('\n', ' ')
+                answer = remove_repeated_sentences(answer)  # Remove repeated sentences
+
+                # Format the source documents
+                sources = result["source_documents"]
+                cleaned_sources = []
+                for i, source in enumerate(sources):
+                    # Convert the source document to string if it's not already a string
+                    source_str = str(source)
+                    # Remove unwanted parts from the source string and newline characters
+                    cleaned_source = source_str.replace('page_content=', '').replace("'", "").replace('\\n', ' ').replace('\n', ' ')
+                    cleaned_source = remove_repeated_sentences(cleaned_source)  # Remove repeated sentences
+                    cleaned_sources.append(f"Source {i+1}: {cleaned_source}")
+                    
+                # Combine the cleaned answer and sources into the final message
+                answer_message = f"Answer: {answer}\n\nSource Documents:\n" + "\n".join(cleaned_sources)
+            else:
+                answer_message = "No internal results found."
         else:
-            answer_message = "No internal results found."
-    else:
-        # External search with Bing
-        bing_result = bing_search(user_input, bing_api_key)
-        if bing_result != "No results found.":
-            answer_message = f"Bing Search Result: {bing_result}"
-        else:
-            answer_message = "No external results found."
-    
-    st.session_state['past'].append(user_input)
-    st.session_state['generated'].append(answer_message)
-    st.session_state['source'].append(search_type)
+            # External search with Bing
+            bing_result = bing_search(user_input, bing_api_key)
+            if bing_result != "No results found.":
+                # Remove newline characters from the Bing search result if needed
+                clean_bing_result = bing_result.replace('\\n', ' ').replace('\n', ' ')
+                clean_bing_result = remove_repeated_sentences(clean_bing_result)  # Remove repeated sentences
+                answer_message = f"Bing Search Result: {clean_bing_result}"
+            else:
+                answer_message = "No external results found."
+        
+        # Update session state with the processed message
+        st.session_state['past'].append(user_input)
+        st.session_state['generated'].append(answer_message)
+        st.session_state['source'].append(search_type)
+
+
+
 
 
 inject_custom_css()
