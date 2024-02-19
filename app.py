@@ -49,14 +49,21 @@ llm=CTransformers(model="model/llama-2-13b-chat.ggmlv3.q4_0.bin",
   #  chain_type="stuff",
    # retriever=docsearch.as_retriever(search_kwargs={'k': 2}),)
 
-qa=RetrievalQA.from_chain_type(
-    llm=llm, 
-    chain_type="stuff", 
+#qa=RetrievalQA.from_chain_type(
+#    llm=llm, 
+#    chain_type="stuff", 
+#    retriever=docsearch.as_retriever(search_kwargs={'k': 2}),
+#    return_source_documents=True, 
+#    chain_type_kwargs=chain_type_kwargs)
+
+
+qa = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
     retriever=docsearch.as_retriever(search_kwargs={'k': 2}),
-    return_source_documents=True, 
-    chain_type_kwargs=chain_type_kwargs)
-
-
+    return_source_documents=True,
+    chain_type_kwargs={"prompt": PROMPT}
+)
 
 @app.route("/")
 def index():
