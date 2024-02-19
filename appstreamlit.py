@@ -62,7 +62,7 @@ def bing_search(query, bing_api_key):
         return "Error performing Bing search."
 
 
-bing_api_key = '672569df979442e8abcf74be937a27d5'
+bing_api_key = '0c485337974f4e6384f22f19d7086c1b'
 
 
 PINECONE_API_KEY = "6ca2ecba-e336-4f09-9a39-e1e3b67d5f9d"
