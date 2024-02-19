@@ -1,7 +1,11 @@
 body, html {
     height: 100%;
     margin: 0;
-    background: #DF4807; /* Medium orange background */
+    background: url('https://www.eduopinions.com/wp-content/uploads/2018/03/SRH-Heidelberg-University.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .chat {
@@ -163,6 +167,8 @@ body, html {
 .action_menu ul li i {
     padding-right: 10px;
 }
+
+
 
 .action_menu ul li:hover {
     cursor: pointer;
