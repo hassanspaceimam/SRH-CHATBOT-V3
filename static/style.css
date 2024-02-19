@@ -85,7 +85,8 @@ body, html {
 
 .user_info span, .user_info p {
     font-size: 20px;
-    color: black; /* Black color for text for better readability */
+    color: #F8F8FF; /* Black color for text for better readability */
+    font-weight: bold; /* Make text bold */
 }
 
 .video_cam {
@@ -167,9 +168,6 @@ body, html {
 .action_menu ul li i {
     padding-right: 10px;
 }
-
-
-
 .action_menu ul li:hover {
     cursor: pointer;
     background-color: #E67E22; /* A darker orange on hover */
@@ -180,3 +178,4 @@ body, html {
         margin-bottom: 15px !important;
     }
 }
+
