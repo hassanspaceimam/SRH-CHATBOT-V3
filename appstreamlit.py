@@ -9,39 +9,35 @@ from langchain_community.llms import CTransformers
 from langchain.chains import RetrievalQA
 from src.helper import download_hugging_face_embeddings
 from src.prompt import prompt_template
+import base64
 
+
+SRH_IMAGE_PATH = 'SRH_rounded.png'
 st.set_page_config(page_icon='SRH.png',page_title="SrhGPT")
 
+
 def inject_custom_css():
+    with open(SRH_IMAGE_PATH, "rb") as image_file:
+        base64_logo = base64.b64encode(image_file.read()).decode()
     st.markdown("""
         <style>
-        .msg {
-            background-color: #FFFFFF;
+        [data-testid="stHorizontalBlock"]{
+                align-items:center;
+                
         }
-        .chat{
-            background:#FFFF;
-        }
+        [data-testid="stHorizontalBlock"] > div {
+                width:100px !important;
+                flex: none !important;
+        }      
         h1 {
             color: #DF4807; 
-        }
-        .message {
-            background-color: none !important;
-        }
-        .overlay {
-            position: fixed;
-            display: block;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 2;
-            cursor: pointer;
+            width:600px ! important;
+            font-size: 40px !important;
         }
         </style>
         """, unsafe_allow_html=True)
+    
+    
 
 @lru_cache(maxsize=100)
 def bing_search(query, bing_api_key):
@@ -78,7 +74,7 @@ PROMPT = PromptTemplate(template=prompt_template, input_variables=["context", "q
 
 llm = CTransformers(model="model/llama-2-13b-chat.ggmlv3.q4_0.bin",
                     model_type="llama",
-                    config={'max_new_tokens': 512, 'temperature': 0.5})
+                    config={'max_new_tokens': 612, 'temperature': 0.5})
 
 qa = RetrievalQA.from_chain_type(
     llm=llm,
@@ -88,7 +84,14 @@ qa = RetrievalQA.from_chain_type(
     chain_type_kwargs={"prompt": PROMPT}
 )
 
-st.title("SRH Chat Bot")
+# st.title("PersonaLearn: Personalized learning for ADSA")
+def display_title_and_image():
+    col1, col2 = st.columns([1, 3])
+    with col1:
+        st.image(SRH_IMAGE_PATH, width=70)
+    with col2:
+        st.title("PersonaLearn: Personalized learning for ADSA")
+    
 
 
 def initialize_session_state():
@@ -138,50 +141,43 @@ def remove_repeated_sentences(text):
     return ' '.join(unique_sentences)
 
 def process_query(user_input, search_type):
-    with st.spinner('Fetching the answer...'):  # Start of spinner logic
+    with st.spinner('Fetching the answer...'):
         if search_type == "Internal":
-            # Internal search with RetrievalQA
             result = qa.invoke({"query": user_input})
             if 'result' in result and 'source_documents' in result:
-                # Remove newline characters and extra slashes from the answer
                 answer = result["result"].replace('\\n', ' ').replace('\n', ' ')
-                answer = remove_repeated_sentences(answer)  # Remove repeated sentences
+                answer = remove_repeated_sentences(answer)
 
-                # Format the source documents
                 sources = result["source_documents"]
                 cleaned_sources = []
                 for i, source in enumerate(sources):
-                    # Convert the source document to string if it's not already a string
                     source_str = str(source)
-                    # Remove unwanted parts from the source string and newline characters
+                    # Remove specific unwanted characters
                     cleaned_source = source_str.replace('page_content=', '').replace("'", "").replace('\\n', ' ').replace('\n', ' ')
-                    cleaned_source = remove_repeated_sentences(cleaned_source)  # Remove repeated sentences
-                    cleaned_sources.append(f"Source {i+1}: {cleaned_source}")
-                    
-                # Combine the cleaned answer and sources into the final message
+                    cleaned_source = re.sub(r'[-.]{2,}', '', cleaned_source)  # This line removes sequences of dashes or dots
+                    cleaned_source = remove_repeated_sentences(cleaned_source)
+                    cleaned_sources.append(f"Source {i+1}: {cleaned_source.strip()}")  # Ensure no additional characters
+                
+                # Combine the cleaned answer and sources into the final message without unwanted characters
                 answer_message = f"Answer: {answer}\n\nSource Documents:\n" + "\n".join(cleaned_sources)
             else:
                 answer_message = "No internal results found."
         else:
-            # External search with Bing
             bing_result = bing_search(user_input, bing_api_key)
             if bing_result != "No results found.":
-                # Remove newline characters from the Bing search result if needed
                 clean_bing_result = bing_result.replace('\\n', ' ').replace('\n', ' ')
-                clean_bing_result = remove_repeated_sentences(clean_bing_result)  # Remove repeated sentences
+                clean_bing_result = re.sub(r'[-.]{2,}', '', clean_bing_result)  # Remove sequences of dashes or dots
+                clean_bing_result = remove_repeated_sentences(clean_bing_result)
                 answer_message = f"Bing Search Result: {clean_bing_result}"
             else:
                 answer_message = "No external results found."
         
-        # Update session state with the processed message
         st.session_state['past'].append(user_input)
         st.session_state['generated'].append(answer_message)
         st.session_state['source'].append(search_type)
 
 
-
-
-
 inject_custom_css()
+display_title_and_image()
 initialize_session_state()
 display_chat_history()
