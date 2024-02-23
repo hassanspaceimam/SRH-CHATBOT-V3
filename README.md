@@ -59,7 +59,7 @@ This Pinecone index is essential for storing and retrieving vectorized represent
   ```bash
   python store_index.py
   ```
-- **Using Local PDF Documents**:
+- **Using PDF Documents Available in a Google Cloud Bucket**:
   If you prefer to load your PDF documents from a Google Cloud Storage bucket, update the BUCKET_NAME in the gcs_store_index.py script with your actual bucket name. Specify the absolute path to your data folder in the DATA_FOLDER variable within the script. This method will download the PDF documents from your Google Cloud Storage bucket, convert them to vectors, and upload them to the Pinecone index:
   ```bash
   python gcs_store_index.py
