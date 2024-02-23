@@ -1,4 +1,19 @@
 # SRH-CHATBOT-V3
+
+SRH-CHATBOT-V3 is a sophisticated chatbot system tailored for university environments, designed to deliver efficient and precise responses by utilizing cutting-edge technologies such as Meta Llama2 and Pinecone. Engineered for simplicity and scalability, it is ideally suited for diverse university-related applications, from streamlining administrative tasks and improving operational efficiency to facilitating interactive learning environments for students and faculty. This chatbot aims to transform communication within the university, ensuring that information and academic support are more accessible and effective for the entire university community.
+
+
+## Getting Started
+
+Follow these steps to get your copy of SRH-CHATBOT-V3 up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+- **Anaconda:** An Anaconda distribution to manage Python versions and environments. If you don't have Anaconda installed, download it from [Anaconda's official website](https://www.anaconda.com/products/individual).
+- **Pinecone Account:** A Pinecone account to manage your vectors and indexes. Sign up at [Pinecone.io](https://www.pinecone.io/) if you haven't already.
+- **Google Cloud Storage Bucket:** A Google Cloud Storage bucket for storing your PDF documents. Make sure you have created a bucket in your Google Cloud account.
+- **Bing Search API Key:** A Bing Search API key for integrating Bing Web Search capabilities. Follow the steps at [Create a Bing Search Service Resource](https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/create-bing-search-service-resource) to obtain your API key.
+
 ## Steps to run project 
 
 Clone the repository
@@ -70,3 +85,20 @@ streamlit run appstreamlit.py  # For Streamlit
 - Streamlit
 - Google Cloud Storage
 - Bing Search API
+
+http://localhost:8080/` or the port specified by Flask upon launching.
+
+### Tech Stack
+
+- Python: Core programming language
+- LangChain: Library for building language model applications
+- Flask: Web framework for building the backend
+- Meta Llama2: AI model for natural language understanding and generation
+- Pinecone: Vector database for similarity search
+- Streamlit: Framework for building interactive web apps
+- Google Cloud Storage: Cloud storage for pdf files
+- Bing Search API: Web search capabilities
+
+### Acknowledgments
+
+- Special thanks to SRH Heidelberg for supporting this project.
