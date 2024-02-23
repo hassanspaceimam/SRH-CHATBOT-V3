@@ -1,7 +1,6 @@
 # SRH-CHATBOT-V3
 ## Steps to run project 
 
-
 Clone the repository
 
 ```bash
@@ -27,8 +26,9 @@ pip install -r requirements.txt
 ### Create a `.env` file in the root directory and add your Pinecone credentials as follows:
 
 ```ini
-PINECONE_API_KEY = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-PINECONE_API_ENV = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+PINECONE_API_KEY = "your_pinecone_api_key_here"
+PINECONE_API_ENV = "your_pinecone_environment_here"
+BING_SEARCH_API_KEY = "your_bing_search_api_key_here"
 ```
 
 
@@ -45,14 +45,20 @@ https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML
 ```
 
 ```bash
-# Make sure Pincecone index called 'srh-heidelberg-docs' with METRIC = cosine and DIMENSIONS = 768 is created beforehand 
-# run the following command to convert pdf files in data folder into vectors and upload them to Pincecone
+# Make sure Pinecone index called 'srh-heidelberg-docs' with METRIC = cosine and DIMENSIONS = 768 is created beforehand 
+# run the following command to convert pdf files in data folder into vectors and upload them to Pinecone
 python store_index.py
 ```
 
 ```bash
-# Finally run the following command to launch app and go to http://localhost:8080/ 
-python app.py
+# Alternatively, if you wish to load your PDF documents from a Google Cloud Storage bucket, update the BUCKET_NAME in the gcs_store_index.py script. Specify the absolute path to your data folder in the DATA_FOLDER variable within this script, and then run:
+python gcs_store_index.py
+```
+
+```bash
+# Finally run the following command to launch app and go to http://localhost:8080/ for Flask or http://localhost:8501/ for Streamlit
+python app.py  # For Flask
+streamlit run appstreamlit.py  # For Streamlit
 ```
 ### Techstack Used:
 
@@ -62,3 +68,5 @@ python app.py
 - Meta Llama2
 - Pinecone
 - Streamlit
+- Google Cloud Storage
+- Bing Search API
